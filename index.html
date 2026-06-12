@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 應用於視障教材製作｜學員作品展示大廳</title>
+  <style>
+    :root {
+      --bg-1: #fff7ed;
+      --bg-2: #fef3c7;
+      --bg-3: #dbeafe;
+      --card: rgba(255, 255, 255, 0.92);
+      --text: #1f2937;
+      --muted: #4b5563;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #f59e0b;
+      --capybara: #92400e;
+      --border: rgba(37, 99, 235, 0.22);
+      --focus: #ffea00;
+      --shadow: 0 18px 36px rgba(15, 23, 42, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.45), transparent 40%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, var(--bg-3));
+      line-height: 1.7;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -80px;
+      z-index: 999;
+      padding: 12px 18px;
+      background: #000;
+      color: #fff;
+      border-radius: 0 0 12px 12px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 5px solid var(--focus);
+      outline-offset: 4px;
+    }
+
+    header {
+      padding: 44px 20px 24px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--border);
+      color: var(--capybara);
+      font-weight: 900;
+      box-shadow: 0 8px 20px rgba(146, 64, 14, 0.12);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      line-height: 1.18;
+      color: #1e3a8a;
+      text-shadow: 0 3px 0 rgba(255, 255, 255, 0.75);
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      max-width: 860px;
+      margin: 18px auto 0;
+      font-size: clamp(1.12rem, 2vw, 1.42rem);
+      color: var(--muted);
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.88);
+      border-radius: 999px;
+      padding: 10px 18px;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 54px;
+    }
+
+    .works-intro {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-left: 10px solid var(--accent);
+      border-radius: 20px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      font-weight: 800;
+      color: #374151;
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .work-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 260px;
+      padding: 24px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 26px;
+      color: var(--text);
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .work-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(245, 158, 11, 0.2), transparent 36%),
+        radial-gradient(circle at bottom left, rgba(37, 99, 235, 0.16), transparent 34%);
+      pointer-events: none;
+    }
+
+    .work-card:hover,
+    .work-card:focus {
+      transform: translateY(-8px);
+      border-color: var(--primary);
+      box-shadow: 0 24px 48px rgba(37, 99, 235, 0.22);
+    }
+
+    .work-card:focus {
+      outline: 6px solid var(--focus);
+      outline-offset: 6px;
+    }
+
+    .work-card:active {
+      transform: translateY(-2px) scale(0.99);
+    }
+
+    .work-no,
+    .work-title,
+    .work-desc,
+    .enter-btn {
+      position: relative;
+      z-index: 1;
+    }
+
+    .work-no {
+      align-self: flex-start;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: #1e3a8a;
+      color: #fff;
+      font-weight: 900;
+      font-size: 0.98rem;
+      margin-bottom: 14px;
+    }
+
+    .work-title {
+      margin: 0 0 12px;
+      font-size: clamp(1.38rem, 2vw, 1.78rem);
+      line-height: 1.25;
+      color: #111827;
+      font-weight: 950;
+    }
+
+    .work-desc {
+      margin: 0;
+      color: #374151;
+      font-size: 1.08rem;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .enter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-start;
+      min-height: 46px;
+      margin-top: 22px;
+      padding: 10px 18px;
+      border-radius: 14px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+    }
+
+    .work-card:hover .enter-btn,
+    .work-card:focus .enter-btn {
+      background: var(--primary-dark);
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 16px 36px;
+      color: #374151;
+      font-size: 1rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.45);
+      border-top: 1px solid rgba(37, 99, 235, 0.16);
+    }
+
+    @media (max-width: 980px) {
+      .works-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 30px 14px 16px;
+      }
+
+      .subtitle {
+        border-radius: 18px;
+      }
+
+      main {
+        width: min(100% - 20px, 1180px);
+        padding-top: 14px;
+      }
+
+      .works-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .work-card {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#works">跳到作品選單</a>
+
+  <header>
+    <div class="badge" aria-hidden="true">🐹 無障礙教材作品展示</div>
+    <h1>AI 應用於視障教材製作｜學員作品展示大廳</h1>
+    <p class="subtitle">完成五個無障礙互動教材作品後，請從下方選擇作品進入測試。</p>
+  </header>
+
+  <main id="works" aria-label="學員作品選單">
+    <section class="works-intro" aria-label="操作說明">
+      請使用滑鼠、觸控或鍵盤 Tab 鍵選擇作品卡片；按 Enter 即可進入對應作品。
+    </section>
+
+    <section class="works-grid" aria-label="五個學員作品">
+      <a class="work-card" href="01-geo115.html" aria-label="作品一，地理作答平台。身障甄試地理試題作答、自動批改、筆記與寄送成果。">
+        <span class="work-no">作品 01</span>
+        <h2 class="work-title">地理作答平台</h2>
+        <p class="work-desc">身障甄試地理試題作答、自動批改、筆記與寄送成果。</p>
+        <span class="enter-btn">進入作品</span>
+      </a>
+
+      <a class="work-card" href="02-accessible_cloze.html" aria-label="作品二，無障礙克漏字練習。英文單字學習、挖空填答、全字複寫與錯題本匯出。">
+        <span class="work-no">作品 02</span>
+        <h2 class="work-title">無障礙克漏字練習</h2>
+        <p class="work-desc">英文單字學習、挖空填答、全字複寫與錯題本匯出。</p>
+        <span class="enter-btn">進入作品</span>
+      </a>
+
+      <a class="work-card" href="03-whack_en.html" aria-label="作品三，英語打地鼠遊戲。選擇目標單字，敲擊正確單字，訓練視覺搜尋與反應。">
+        <span class="work-no">作品 03</span>
+        <h2 class="work-title">英語打地鼠遊戲</h2>
+        <p class="work-desc">選擇目標單字，敲擊正確單字，訓練視覺搜尋與反應。</p>
+        <span class="enter-btn">進入作品</span>
+      </a>
+
+      <a class="work-card" href="04-run_en.html" aria-label="作品四，英語跑酷遊戲。操控水豚在三線道移動，吃掉正確單字並避開干擾。">
+        <span class="work-no">作品 04</span>
+        <h2 class="work-title">英語跑酷遊戲</h2>
+        <p class="work-desc">操控水豚在三線道移動，吃掉正確單字並避開干擾。</p>
+        <span class="enter-btn">進入作品</span>
+      </a>
+
+      <a class="work-card" href="05-calendar.html" aria-label="作品五，點字學習無障礙日曆。月曆選日、分時段學習紀錄、自動儲存與匯出。">
+        <span class="work-no">作品 05</span>
+        <h2 class="work-title">點字學習無障礙日曆</h2>
+        <p class="work-desc">月曆選日、分時段學習紀錄、自動儲存與匯出。</p>
+        <span class="enter-btn">進入作品</span>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 TVIMAX 麥西穆斯 x 聽觸視界
+  </footer>
+</body>
+</html>

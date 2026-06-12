@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>兩千單聽觸視界 - 克漏字挖空練習</title>
+    
+    <script src="words_en_2000.js"></script>
+    
+    <style>
+        :root { 
+            --primary: #2c3e50; --secondary: #e74c3c; --accent: #3498db; 
+            --bg: #121212; --text: #ffffff; --highlight: #f1c40f; 
+            --panel-bg: #1e1e1e; --success: #27ae60; --error: #e74c3c;
+        }
+        
+        body { 
+            font-family: 'Century Gothic', '微軟正黑體', sans-serif; 
+            background-color: var(--bg); color: var(--text); 
+            text-align: center; margin: 0; padding: 20px; 
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+
+        /* ✨ 頂部導覽列區域 */
+        .header-area {
+            width: 100%; max-width: 750px; display: flex; justify-content: flex-start; margin-bottom: 10px;
+        }
+        .back-nav { 
+            background-color: #34495e; color: white; padding: 10px 20px; 
+            border-radius: 8px; font-weight: bold; border: none; cursor: pointer; font-size: 1.1em;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center;
+        }
+        .back-nav:hover { background-color: #2c3e50; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0,0,0,0.5); }
+        
+        h1 { color: var(--highlight); margin-bottom: 5px; font-size: 2.2em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);}
+        .subtitle { font-size: 1.2em; margin-bottom: 20px; color: #bdc3c7;}
+
+        .container { 
+            background: var(--panel-bg); padding: 30px; border-radius: 15px; 
+            border: 3px solid var(--highlight); width: 100%; max-width: 750px; box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        *:focus { outline: 5px solid var(--highlight); outline-offset: 4px; }
+
+        .btn { 
+            font-size: 1.3em; padding: 12px 25px; background: var(--highlight); color: #000; 
+            border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%;
+            transition: 0.2s;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.4); }
+        .btn-secondary { background: var(--accent); color: #fff; }
+        .btn-tool { background: #27ae60; border-color: #2ecc71; color: white; }
+
+        .screen { display: none; width: 100%; }
+        .screen.active { display: block; }
+
+        /* 選單畫面：課程列表 */
+        .lesson-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        .lesson-btn {
+            background: #333; color: #fff; border: 2px solid #555; padding: 15px;
+            font-size: 1.4em; border-radius: 10px; cursor: pointer; transition: 0.2s;
+        }
+        .lesson-btn:hover { background: #444; border-color: var(--highlight); color: var(--highlight); }
+
+        /* 錯題工具箱 */
+        .toolbox-area { margin-top: 30px; border-top: 2px dashed #555; padding-top: 20px; text-align: left;}
+        .toolbox-area h3 { color: #e74c3c; margin-top: 0;}
+
+        /* 單字學習區 */
+        #learn-word { font-size: 4em; color: var(--highlight); font-weight: bold; letter-spacing: 2px; margin: 20px 0;}
+        #learn-translate { font-size: 1.8em; margin-bottom: 10px; }
+        .sentence-box { background: #333; padding: 15px; border-radius: 10px; font-size: 1.2em; text-align: left; line-height: 1.5; border-left: 5px solid var(--highlight); margin-bottom: 20px;}
+
+        /* 挖空與複寫區 */
+        .cloze-container {
+            display: flex; justify-content: center; align-items: center; flex-wrap: wrap;
+            gap: 8px; margin: 20px 0; padding: 15px; background: #222; border-radius: 12px;
+            border: 2px dashed #2ecc71;
+        }
+        .cloze-letter-static { font-size: 2.8em; font-weight: bold; color: #fff; padding: 0 5px; text-transform: lowercase; }
+        .cloze-box {
+            font-size: 2.5em; width: 55px; height: 65px; text-align: center;
+            border: 3px solid var(--accent); border-radius: 8px; background: #fffde7; color: #000; font-weight: bold;
+            text-transform: lowercase; transition: 0.3s;
+        }
+
+        .full-word-section { margin-top: 30px; border-top: 2px dashed #444; padding-top: 20px; }
+        .full-word-section label { display: block; font-size: 1.2em; margin-bottom: 10px; color: var(--highlight); }
+        
+        .fill-textarea {
+            width: 100%; min-height: 60px; font-size: 2.2em; font-weight: bold;
+            border: 3px solid var(--accent); border-radius: 8px; padding: 10px;
+            color: #c0392b; background: #fffde7; text-align: center;
+            transition: 0.3s; resize: none; overflow: hidden; box-sizing: border-box;
+            font-family: 'Century Gothic', 'Arial', sans-serif;
+        }
+        .fill-textarea:focus { background: #fff; border-color: var(--secondary); }
+        .fill-textarea.error { border-color: var(--secondary); background: #fadbd8; }
+        .fill-textarea.correct { border-color: var(--success); background: #d4edda; color: var(--success); }
+
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+        .feedback { font-size: 1.4em; font-weight: bold; margin-top: 20px; min-height: 1.5em; line-height: 1.4;}
+        .status-bar { display: flex; justify-content: space-between; font-size: 1.2em; border-bottom: 2px solid #444; padding-bottom: 10px; color: #bdc3c7;}
+    </style>
+</head>
+<body>
+
+    <div class="header-area">
+        <button onclick="window.location.href='index.html'" class="back-nav" tabindex="0" aria-label="返回遊戲大廳">⬅ 返回大廳科目選單</button>
+    </div>
+
+    <h1>📝 兩千單無障礙克漏字</h1>
+    <div class="subtitle">挖空測驗 ＋ 全字複寫，加深肌肉記憶！</div>
+
+    <div aria-live="assertive" aria-atomic="true" class="sr-only" id="announcer"></div>
+
+    <main id="screen-menu" class="screen container active">
+        <h2 tabindex="-1">請選擇要練習的分類主題</h2>
+        <div class="lesson-list" id="lesson-list-container">
+            </div>
+
+        <div class="toolbox-area">
+            <h3 tabindex="0">📓 複習工具箱</h3>
+            <p id="error-status" style="margin-top:0;">目前已累積 <strong style="color:var(--highlight)">0</strong> 筆錯題紀錄。</p>
+            <button class="btn btn-tool" onclick="exportErrorLog()">📝 匯出專屬錯題本 (.txt)</button>
+        </div>
+    </main>
+
+    <main id="screen-learn" class="screen container">
+        <div class="status-bar"><span>進度：<span id="learn-progress"></span></span></div>
+        <h2 id="learn-heading" tabindex="-1">新單字學習</h2>
+        <div id="learn-word"></div>
+        <div id="learn-translate"></div>
+        <div class="sentence-box" id="learn-sentence" style="display: none;"></div>
+        
+        <button class="btn btn-secondary" onclick="playCurrentWordSound()">🔊 聽讀音</button>
+        <button class="btn" style="margin-top: 20px;" onclick="startClozeTest()">我學會了，開始測驗</button>
+        <button class="btn" style="background:#555; color:#fff; margin-top: 10px;" onclick="backToMenu()">返回主題選單</button>
+    </main>
+
+    <main id="screen-cloze" class="screen container">
+        <div class="status-bar"><span>作答進度：<span id="cloze-progress"></span></span></div>
+        <h2 id="cloze-heading" tabindex="-1">測驗：<span id="target-translate"></span></h2>
+        
+        <div id="cloze-container" class="cloze-container" role="group" aria-label="步驟一：請填入缺少的字母"></div>
+
+        <div class="full-word-section">
+            <label for="full-word-input">步驟二：請再次輸入一次完整的單字</label>
+            <textarea id="full-word-input" class="fill-textarea" placeholder="在此輸入完整單字..." aria-label="全字複寫區"></textarea>
+        </div>
+
+        <div id="feedback-area" class="feedback"></div>
+
+        <button id="btn-submit" class="btn btn-secondary" onclick="checkAnswer()">批改答案</button>
+        <button id="btn-next" class="btn" style="display:none;" onclick="nextWord()">答對了，下一題</button>
+        <button class="btn" style="background:#555; color:#fff; margin-top: 10px;" onclick="backToMenu()">中斷測驗並返回選單</button>
+    </main>
+
+    <script>
+        let currentLessonList = [], currentIndex = 0, currentWordObj = null, blankIndices = [];
+        const synth = window.speechSynthesis;
+
+        // ✨ 錯題記憶陣列
+        let errorLogData = [];
+
+        window.onload = () => { initMenu(); };
+
+        function announce(msg) { document.getElementById('announcer').textContent = msg; }
+
+        function showScreen(id, focusId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(focusId) setTimeout(() => document.getElementById(focusId).focus(), 100);
+        }
+
+        // 動態生成主題按鈕
+        function initMenu() {
+            const container = document.getElementById('lesson-list-container');
+            container.innerHTML = '';
+            
+            if (typeof window.englishDb === 'undefined' || !window.englishDb["會考2000單"]) {
+                container.innerHTML = '<p style="color:var(--error); font-weight:bold; font-size:1.2em;">⚠️ 警告：找不到 2000 單字庫！<br>請確認 words_en_2000.js 檔案已放置於同一資料夾內。</p>';
+                return;
+            }
+
+            const themes = window.englishDb["會考2000單"]["主題分類"];
+            for (let themeName in themes) {
+                let btn = document.createElement('button');
+                btn.className = 'lesson-btn';
+                btn.innerText = `開始練習：${themeName}`;
+                btn.onclick = () => startLesson(themeName);
+                container.appendChild(btn);
+            }
+        }
+
+        function startLesson(themeName) {
+            currentLessonList = [...window.englishDb["會考2000單"]["主題分類"][themeName]].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            announce(`已選擇 ${themeName}。總共 ${currentLessonList.length} 個單字。準備開始學習。`);
+            loadWordPhase();
+        }
+
+        function loadWordPhase() {
+            if (currentIndex >= currentLessonList.length) { 
+                alert("恭喜！本主題單字已全部複習完畢！"); 
+                backToMenu(); 
+                return; 
+            }
+            currentWordObj = currentLessonList[currentIndex];
+            document.getElementById('learn-progress').innerText = `${currentIndex + 1} / ${currentLessonList.length}`;
+            document.getElementById('learn-word').innerText = currentWordObj.word;
+            document.getElementById('learn-translate').innerText = currentWordObj.translate;
+            
+            // 處理是否有例句的狀況
+            const sentenceEl = document.getElementById('learn-sentence');
+            if (currentWordObj.sentence) {
+                sentenceEl.innerText = currentWordObj.sentence;
+                sentenceEl.style.display = 'block';
+            } else {
+                sentenceEl.innerText = "";
+                sentenceEl.style.display = 'none';
+            }
+            
+            showScreen('screen-learn', 'learn-heading');
+            setTimeout(playCurrentWordSound, 500);
+        }
+
+        function playCurrentWordSound() {
+            synth.cancel();
+            
+            let utterWordEn = new SpeechSynthesisUtterance(currentWordObj.word); utterWordEn.lang = 'en-US';
+            let utterWordZh = new SpeechSynthesisUtterance(currentWordObj.translate); utterWordZh.lang = 'zh-TW';
+            
+            utterWordEn.onend = () => {
+                if(currentWordObj.sentence) {
+                    let sentEn = "", sentZh = "";
+                    const match = currentWordObj.sentence.match(/^(.*?)\s*\((.*)\)$/);
+                    if (match) { sentEn = match[1]; sentZh = match[2]; } 
+                    else { sentEn = currentWordObj.sentence; }
+
+                    let utterSentEn = new SpeechSynthesisUtterance(sentEn); utterSentEn.lang = 'en-US';
+                    let utterSentZh = new SpeechSynthesisUtterance(sentZh); utterSentZh.lang = 'zh-TW';
+
+                    utterWordZh.onend = () => synth.speak(utterSentEn);
+                    utterSentEn.onend = () => { if(sentZh) synth.speak(utterSentZh); };
+                }
+                synth.speak(utterWordZh);
+            };
+
+            synth.speak(utterWordEn);
+        }
+
+        function startClozeTest() {
+            synth.cancel();
+            document.getElementById('cloze-progress').innerText = `${currentIndex + 1} / ${currentLessonList.length}`;
+            document.getElementById('target-translate').innerText = currentWordObj.translate;
+            
+            const word = currentWordObj.word;
+            const charOnlyLength = word.replace(/\s+/g, '').length;
+            const targetBlanks = Math.max(1, Math.floor(charOnlyLength * 0.5));
+            
+            blankIndices = [];
+            let attempt = 0;
+            while(blankIndices.length < targetBlanks && attempt < 100) {
+                let r = Math.floor(Math.random() * word.length);
+                if(word[r] !== ' ' && !blankIndices.includes(r)) blankIndices.push(r);
+                attempt++;
+            }
+            blankIndices.sort((a, b) => a - b);
+
+            const container = document.getElementById('cloze-container');
+            container.innerHTML = '';
+            
+            for(let i=0; i<word.length; i++) {
+                if (word[i] === ' ') {
+                    let spaceSpan = document.createElement('span');
+                    spaceSpan.style.width = '20px';
+                    spaceSpan.style.display = 'inline-block';
+                    container.appendChild(spaceSpan);
+                } else if (blankIndices.includes(i)) {
+                    let input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'cloze-box'; 
+                    input.maxLength = 1;
+                    input.setAttribute('aria-label', `單字第 ${i+1} 個字母挖空`);
+                    input.oninput = function() {
+                        this.value = this.value.replace(/[^a-zA-Z]/g, '');
+                        if(this.value && this.nextElementSibling) {
+                            let next = this.nextElementSibling;
+                            while(next && next.tagName !== 'INPUT') next = next.nextElementSibling;
+                            if(next) next.focus();
+                            else document.getElementById('full-word-input').focus();
+                        }
+                    };
+                    container.appendChild(input);
+                } else {
+                    let span = document.createElement('span');
+                    span.className = 'cloze-letter-static'; span.innerText = word[i];
+                    container.appendChild(span);
+                }
+            }
+
+            const fullInput = document.getElementById('full-word-input');
+            fullInput.value = ''; fullInput.classList.remove('error', 'correct');
+            fullInput.oninput = function() {
+                this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';
+            };
+
+            document.getElementById('feedback-area').innerText = '';
+            document.getElementById('btn-submit').style.display = 'block';
+            document.getElementById('btn-next').style.display = 'none';
+
+            showScreen('screen-cloze', 'cloze-heading');
+            announce(`開始測驗。請先填入挖空字母，再複寫整個單字。`);
+            
+            setTimeout(() => {
+                const firstInput = container.querySelector('input');
+                if (firstInput) firstInput.focus();
+            }, 300);
+        }
+
+        function checkAnswer() {
+            const word = currentWordObj.word.toLowerCase();
+            const fullVal = document.getElementById('full-word-input').value.trim().toLowerCase().replace(/\s+/g, ' ');
+            const inputs = document.querySelectorAll('.cloze-box');
+            let clozeVal = "";
+            let inputIdx = 0;
+
+            for(let i=0; i<word.length; i++) {
+                if (word[i] === ' ') {
+                    clozeVal += ' ';
+                } else if(blankIndices.includes(i)) {
+                    clozeVal += inputs[inputIdx].value.toLowerCase();
+                    inputIdx++;
+                } else { 
+                    clozeVal += word[i].toLowerCase(); 
+                }
+            }
+
+            const feedback = document.getElementById('feedback-area');
+            const fullInput = document.getElementById('full-word-input');
+
+            if (clozeVal === word && fullVal === word) {
+                // 答對處理
+                let successMsg = "🌟 完全正確！單字記憶加深了。";
+                if(currentWordObj.sentence) successMsg += "<br>完整例句：" + currentWordObj.sentence;
+                
+                feedback.innerHTML = successMsg;
+                feedback.style.color = "var(--success)";
+                fullInput.classList.add('correct');
+                fullInput.classList.remove('error');
+                
+                inputs.forEach(input => { input.style.color = '#27ae60'; input.style.borderColor = '#27ae60'; input.disabled = true; });
+
+                document.getElementById('btn-submit').style.display = 'none';
+                document.getElementById('btn-next').style.display = 'block';
+                
+                announce("答對了！非常棒，請按下一題。");
+                
+                synth.cancel();
+                let en = new SpeechSynthesisUtterance("Correct! " + word); en.lang = 'en-US';
+                synth.speak(en);
+                
+                setTimeout(() => document.getElementById('btn-next').focus(), 100);
+            } else {
+                // ✨ 答錯與錯題紀錄處理
+                feedback.innerText = "❌ 拼寫有些錯誤，請聽聲音再試一次！";
+                feedback.style.color = "var(--secondary)";
+                fullInput.classList.add('error');
+                
+                // 視覺提示挖空處錯誤
+                let checkIdx = 0;
+                for(let i=0; i<word.length; i++) {
+                    if(word[i] !== ' ' && blankIndices.includes(i)) {
+                        let input = inputs[checkIdx];
+                        if(input.value.toLowerCase() !== word[i].toLowerCase()) {
+                            input.style.backgroundColor = '#fadbd8';
+                            setTimeout(() => input.style.backgroundColor = '#fffde7', 800);
+                            input.value = ''; 
+                        }
+                        checkIdx++;
+                    }
+                }
+
+                // 寫入錯題紀錄 (避免重複記錄)
+                let errorString = `❌ 單字：${currentWordObj.word} = ${currentWordObj.translate}`;
+                if (!errorLogData.includes(errorString)) {
+                    errorLogData.push(errorString);
+                    document.getElementById('error-status').innerHTML = `目前已累積 <strong style="color:var(--highlight)">${errorLogData.length}</strong> 筆錯題紀錄。`;
+                }
+
+                announce(`拼錯了。請聽讀音後重新修正。`);
+                
+                synth.cancel();
+                let en = new SpeechSynthesisUtterance(word); en.lang = 'en-US';
+                synth.speak(en);
+
+                fullInput.focus();
+                fullInput.select();
+            }
+        }
+
+        function nextWord() { currentIndex++; loadWordPhase(); }
+
+        // ✨ 匯出錯題本功能
+        function exportErrorLog() {
+            if (errorLogData.length === 0) {
+                alert("太棒了！目前沒有任何錯題紀錄喔！");
+                announce("目前沒有錯題紀錄");
+                return;
+            }
+            
+            const studentName = prompt("請輸入您的姓名：", "學生") || "學生";
+            const timestamp = new Date().toLocaleString('zh-TW');
+            
+            let content = `=======================================\n`;
+            content += `  📝 ${studentName} 的克漏字挖空 專屬錯題本\n`;
+            content += `  建立時間：${timestamp}\n`;
+            content += `=======================================\n\n`;
+            
+            content += errorLogData.join("\n---------------------------------------\n");
+            content += `\n\n加油！多複習幾次一定能記住！`;
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${studentName}_克漏字_錯題本.txt`;
+            link.click();
+            
+            announce("錯題本匯出成功");
+        }
+
+        function backToMenu() {
+            synth.cancel();
+            showScreen('screen-menu', 'lesson-list-container');
+        }
+    </script>
+</body>
+</html>
