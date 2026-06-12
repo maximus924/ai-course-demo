@@ -362,9 +362,62 @@
       textarea, input { border: 0; }
       .entry { break-inside: avoid; background: #fff; border: 1px solid #999; }
     }
+
+    /* ✅ 返回學員作品展示大廳：GitHub Pages 同層 index.html */
+    .back-to-lobby {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 99999;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 18px;
+      background: #111827;
+      color: #ffffff;
+      border: 3px solid var(--focus);
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    }
+
+    .back-to-lobby:hover {
+      background: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .back-to-lobby:focus {
+      outline: 5px solid #ffff00;
+      outline-offset: 4px;
+    }
+
+    @media (max-width: 640px) {
+      .back-to-lobby {
+        top: 10px;
+        left: 10px;
+        font-size: .95rem;
+        padding: 8px 14px;
+      }
+      header {
+        padding-top: 64px;
+      }
+    }
+
+    @media print {
+      .back-to-lobby {
+        display: none !important;
+      }
+    }
+
   </style>
 </head>
 <body data-theme="light">
+
+  <a href="index.html" class="back-to-lobby no-print" aria-label="返回學員作品展示大廳">⬅ 返回大廳</a>
+
   <a href="#entryTitle" class="skip-link">跳到今日學習紀錄編輯區</a>
   <div id="liveRegion" class="visually-hidden" aria-live="polite" aria-atomic="true" role="status"></div>
 
